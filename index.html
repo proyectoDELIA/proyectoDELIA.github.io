@@ -2,367 +2,226 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>DEL.IA Chat</title>
-  <link rel="icon" type="image/x-icon" href="src/delia.jpeg">
-  <style>
-
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #ffffff;
-      color: #000000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    body.dark-mode {
-      background-color: #1e1e1e;
-      color: #e6e6e6;
-    }
-
-    .rounded-rectangle {
-      width: 95%;
-      height: 95%;
-      background-color: #faf6ff;
-      border-radius: 20px;
-      border: 2px solid #c4b9d1;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-      display: flex;
-      flex-direction: row;
-      overflow: hidden;
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    body.dark-mode .rounded-rectangle {
-      background-color: #2a2a2a;
-    }
-
-    .sidebar {
-      width: 17%;
-      background-color: #c4b9d1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 1.5rem 1rem;
-      box-shadow: inset -1px 0 10px rgba(0, 0, 0, 0.05);
-      transition: background-color 0.3s;
-    }
-
-    body.dark-mode .sidebar {
-      background-color: #2c2c2c;
-    }
-
-    .profile-pic {
-      width: 100px; /* Adjust size as needed */
-      height: 100px;
-      border-radius: 50%; /* Makes the div circular */
-      background-color: #f0f0f0; /* Circle's background color */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .profile-pic img {
-      width: 90px; /* Adjust image size */
-      height: 90px;
-      border-radius: 50%; /* Ensures the image is circular */
-    }
-
-    .sidebar .name-placeholder {
-      color: #7a4ea3;
-      font-weight: bold;
-      font-size: 150%;
-      text-align: center;
-    }
-
-    .sidebar .text-placeholder {
-      color: inherit;
-      font-size: 100%;
-      text-align: left;
-    }
-
-    .sidebar .socialmedia-placeholder {
-      display: flex;
-      gap: 10px;
-      margin-top: 1rem;
-    }
-
-    .chat-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      position: relative;
-      background-image: url('src/delia-removebg.png'); /* Add your background image here */
-      background-size: contain; /* Adjust the size of the image */
-      background-repeat: no-repeat; /* Prevent repeating of the image */
-      background-position: center;
-    }
-
-    .chat-window {
-      flex: 1;
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      background-color: rgba(255, 255, 255, 0.85); /* Slight transparency for contrast */
-      overflow-y: auto;
-      transition: background-color 0.3s;
-    }
-
-    body.dark-mode .chat-window {
-      background-color: #2a2a2a;
-    }
-
-    .message {
-      max-width: 70%;
-      padding: 1rem;
-      border-radius: 20px;
-      background-color: #c4b9d1;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    .message.bot {
-      align-self: flex-start;
-    }
-
-    body.dark-mode .message {
-      background-color: #3a3a3a;
-      color: #e6e6e6;
-    }
-
-    .message.user {
-      align-self: flex-end;
-      background-color: #eadff0;
-      color: #000000;
-    }
-
-    body.dark-mode .message.user {
-      background-color: #7b7b7b;
-    }
-
-    .input-container {
-      background-color: #fff;
-      padding: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      transition: background-color 0.3s;
-    }
-
-    body.dark-mode .input-container {
-      background-color: #2c2c2c;
-    }
-
-    .input-container input {
-      flex: 1;
-      padding: 0.75rem 1rem;
-      border: none;
-      border-radius: 20px;
-      outline: 4px solid #c4b9d1;
-      font-size: 1rem;
-      color: #000000;
-      box-shadow: 0 0 8px rgba(155, 89, 182, 0.2);
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    body.dark-mode .input-container input {
-      background-color: #444;
-      color: #fff;
-    }
-
-    .input-container input::placeholder {
-      color: #a398b8;
-    }
-
-    .toggle-btn {
-      cursor: pointer;
-      padding: 0.5rem 1rem;
-      background-color: #ffffff;
-      color: #000000;
-      border: none;
-      border-radius: 20px;
-      margin-top: 1rem;
-      font-size: 0.9rem;
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    body.dark-mode .toggle-btn {
-      background-color: #000000;
-      color: #ffffff;
-      border: none;
-    }
-
-    /* Settings button on the right */
-    .settings-button {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      cursor: pointer;
-      z-index: 2;
-    }
-
-    .settings-button img {
-      width: 30px;
-      height: 30px;
-      filter: brightness(0.2);
-    }
-
-    body.dark-mode .settings-button img {
-      filter: brightness(1.5);
-    }
-
-    /* Settings Panel sliding from the right */
-    .settings-panel {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 300px;
-      background-color: #ffffff;
-      box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
-      padding: 0.5rem;
-      transform: translateX(100%);
-      transition: transform 0.3s ease-in-out;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    body.dark-mode .settings-panel {
-      background-color: #333;
-      color: #fff;
-    }
-
-    .settings-panel.open {
-      transform: translateX(0);
-    }
-
-    .close-settings {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-      color: inherit;
-    }
-
-    /* Ensure the image fits inside the panel */
-    .settings-panel img {
-      max-height: 80%; /* Allow the image to occupy up to 80% of the panel height */
-      width: auto;
-      object-fit: contain;
-    }
-  </style>
+  <!-- Título de la web -->
+  <title>DEL.IA Virtual Assistant</title>
+  <!-- Icono de la web -->
+  <link rel="icon" type="image/x-icon" href="src/delia.jpeg" />
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Fuentes de Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Aquí se especifican las fuentes a usar, utilizando "family=xyz".
+    Se pueden añadir varias encadenando "family=xyz&family=zyx". Ver los códigos en Google Fonts - Embed code -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" 
+  rel="stylesheet">
 </head>
 
 <body>
-  <!-- Interfaz -->
-  <div class="rounded-rectangle">
-
-    <!-- Área izquierda para información sobre el proyecto -->
-    <div class="sidebar">
-      <div class="profile-pic">
-        <img src="src/delia-removebg.png">
+  <!-- Contenedor general de todos los elementos, equivale al rectángulo grande -->
+  <div class="base">
+    <!-- El área de la izquierda, contiene elementos de información descriptiva sobre el chatbot -->
+    <div class="barra-lateral">
+      <!-- Foto de perfil -->
+      <div class="foto-perfil">
+        <img src="src/base-removebg-preview.png" />
       </div>
-
-      <!-- Nombre del proyecto -->
-      <div class="name-placeholder">DEL.IA</div>
-
-      <!-- About -->
-      <div class="text-placeholder">DEL.IA is a virtual assistant trained to recognise and classify potential hate-crime cases.<br><br>This is a project developed by the students of LeIA. Find out more about us and our project on social media:</div>
-
-      <!-- Hipervínculos a nuestras redes sociales -->
-      <div class="socialmedia-placeholder">
+      <!-- Título -->
+      <div class="titulo">DEL.IA</div>
+      <!-- Descripción -->
+      <div class="descripcion">
+        DEL.IA is a virtual assistant trained to recognise and classify hate speech and hate crimes.<br /><br />
+        This is a project developed by the students of LeIA. Find out more about us and our project on social media:
+      </div>
+      <!-- Imágenes e hipervínculos a las redes sociales. 
+        Target="_blank" hace que clicar abra una nueva página, en vez de reemplazar en la que estás -->
+      <div class="redes-sociales">
+        <a href="https://github.com/proyectoDELIA/DEL.IA-chatbot/" target="_blank">
+          <img class="dark-toggle-icon" src="src/github.svg" style="width: 50px; height: 50px" />
+        </a>
         <a href="https://www.linkedin.com/in/proyecto-delia-125b09359/" target="_blank">
-          <img src="src/linkedin.png" style="width:50px;height:50px;">
+          <img class="dark-toggle-icon" src="src/linkedin.svg" style="width: 50px; height: 50px" />
         </a>
         <a href="https://www.instagram.com/proyectodel.ia/" target="_blank">
-          <img src="src/instagram.png" style="width:50px;height:50px;">
+          <img class="dark-toggle-icon" src="src/instagram.svg" style="width: 50px; height: 50px" />
         </a>
       </div>
-
-      <!-- Botón de modo oscuro -->
-      <button class="toggle-btn" onclick="toggleDarkMode()">
-        <img id="img1" src="src/brightness-high.svg" style="width:30px;height:30px;">
-      </button>
     </div>
-
-    <!-- Divider - No visible ahora mismo-->
-    <div class="resizer"></div>
-
-    <!-- Área general chat -->
-    <div class="chat-container">
-
-      <!-- Botón de ajustes (arriba a la derecha) -->
-      <div class="settings-button" onclick="toggleSettings()">
+    <!-- Contenedor del chat en sí -->
+    <div class="contenedor-general-chat">
+      <!-- Botón que abre el panel de ajustes -->
+      <div class="boton-ajustes" onclick="toggleSettings()">
         <img src="src/gear.svg" alt="Settings" />
       </div>
-
       <!-- Panel de ajustes -->
-      <div class="settings-panel" id="settings-panel">
-        <!-- Botón de modo oscuro -->
+      <div class="panel-ajustes" id="panel-ajustes">
         <button class="toggle-btn" onclick="toggleDarkMode()">
-          <img id="img1" src="src/brightness-high.svg" style="width:30px;height:30px;">
+          <img class="dark-toggle-icon" src="src/circle-half.svg" style="width: 30px; height: 30px" />
         </button>
       </div>
-
-      <!-- Área de mensajes -->
-      <div class="chat-window" id="chat-window">
-        <div class="message bot">Hi! I'm DEL.IA, your virtual assistant 😊</div>
+      <!-- Chat que contiene los mensajes -->
+      <div class="ventana-chat" id="ventana-chat">
+        <!-- Mensaje inicial estático del bot. Cada nuevo mensaje se añadirá debajo de este -->
+        <div class="mensaje bot">
+          Hi! I'm DEL.IA, your virtual assistant 😊
+        </div>
       </div>
-
-      <!-- Área de input -->
-      <div class="input-container">
-        <input type="text" id="input" placeholder="Type a message..." />
+      <!-- Área de input del usuario -->
+      <div class="contenedor-input">
+        <!-- Elemento para crear un área de división entre input de texto e input de audio -->
+        <div class="input-wrapper">
+          <!-- Input de audio, la imagen del botón cambia al iniciar la captura de audio -->
+          <button id="recordButton" class="input-button">
+            <img id="recordIcon" src="src/mic.svg" style="width: 25px; height: 25px" />
+          </button>
+          <!-- Placeholder de mensaje, desaparece al empezar a escribir -->
+          <textarea id="input" placeholder="Type a message..." rows="1"></textarea>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Funciones - Como esto es código de JavaScript, el formato de los comentarios cambiará -->
+  <!-- Funciones JavaScript -->
   <script>
+    const input = document.getElementById("input");
+    const chatWindow = document.getElementById("ventana-chat");
+    // Funcíón de conversación
+    input.addEventListener("keypress", function (e) {
+      if (e.key === "Enter" && input.value.trim() !== "") {
+        const usermensaje = document.createElement("div");
+        usermensaje.className = "mensaje user";
+        usermensaje.textContent = input.value.trim();
+        chatWindow.appendChild(usermensaje);
 
-    // Escribir al asistente virtual y que te responda con una respuesta estática
-    const input = document.getElementById('input');
-    const chatWindow = document.getElementById('chat-window');
+        const botmensaje = document.createElement("div");
+        botmensaje.className = "mensaje bot";
+        botmensaje.textContent = "( . . . )";
+        chatWindow.appendChild(botmensaje);
 
-    input.addEventListener('keypress', function (e) {
-      if (e.key === 'Enter' && input.value.trim() !== '') {
-        const userMessage = document.createElement('div');
-        userMessage.className = 'message user';
-        userMessage.textContent = input.value.trim();
-        chatWindow.appendChild(userMessage);
-    
-        const botMessage = document.createElement('div');
-        botMessage.className = 'message bot';
-        // En vez de esta respuesta estática, la respuesta sería el output de rasa
-        botMessage.textContent = "Esto es una respuesta estática";
-        chatWindow.appendChild(botMessage);
-    
-        input.value = '';
+        const mensaje = input.value.trim();
+        input.value = "";
         chatWindow.scrollTop = chatWindow.scrollHeight;
+
+        // El mensaje se envía al backend a la función de procesar-y-enviar
+        fetch("http://127.0.0.1:8000/procesar-y-enviar/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mensaje: mensaje })
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            botmensaje.textContent = data.respuesta_traducida || data.respuesta_rasa || "Sin respuesta del bot.";
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+          })
+          .catch((error) => {
+            console.error("Error al enviar mensaje:", error);
+            botmensaje.textContent = "❌ Error al conectar con el servidor.";
+          });
       }
     });
 
-    // Modo oscuro
-    function toggleDarkMode() {
-      document.body.classList.toggle('dark-mode');
-      const el = document.getElementById("img1");
-      el.style.filter = document.body.classList.contains('dark-mode') ? "invert(1)" : "none";
+    // SINGLE BUTTON AUDIO LOGIC
+    let isRecording = false;
+    let mediaRecorder;
+    let audioChunks = [];
+
+    async function toggleRecording() {
+      if (isRecording) {
+        mediaRecorder.stop();
+        document.getElementById('recordButton').innerHTML = '<img id="recordIcon" src="src/mic.svg" style="width: 30px; height: 30px" />';
+        isRecording = false;
+      } else {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
+
+          mediaRecorder.ondataavailable = (event) => {
+            audioChunks.push(event.data);
+          };
+
+          mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+
+            const audiomensaje = document.createElement('div');
+            audiomensaje.classList.add('mensaje', 'user');
+
+            const audioElement = document.createElement('audio');
+            audioElement.controls = true;
+            audioElement.src = audioUrl;
+
+            audiomensaje.appendChild(audioElement);
+            chatWindow.appendChild(audiomensaje);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+
+            sendAudioToServer(audioBlob);
+          };
+
+          mediaRecorder.start();
+          document.getElementById('recordButton').innerHTML = '<img id="recordIcon" src="src/arrow-right-short.svg" style="width: 30px; height: 30px" />';
+          isRecording = true;
+        } catch (err) {
+          console.error('Error accessing the microphone:', err);
+        }
+      }
     }
 
-    // Abrir el panel de ajustes
-    function toggleSettings() {
-      document.getElementById("settings-panel").classList.toggle("open");
+    // El audio se envía a la función procesar-y-enviar, aunque habría que crear una nueva para ello
+    function sendAudioToServer(audioBlob) {
+      const formData = new FormData();
+      formData.append('audio', audioBlob, 'recorded_audio.wav');
+
+      fetch('http://127.0.0.1:8000/procesar-y-enviar/', {
+        method: 'POST',
+        body: formData
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          const botmensaje = document.createElement("div");
+          botmensaje.className = "mensaje bot";
+          botmensaje.textContent = data.respuesta_traducida || data.respuesta_rasa || "Sin respuesta del bot.";
+          chatWindow.appendChild(botmensaje);
+          chatWindow.scrollTop = chatWindow.scrollHeight;
+        })
+        .catch((error) => {
+          console.error("Error al enviar audio:", error);
+          const botmensaje = document.createElement("div");
+          botmensaje.className = "mensaje bot";
+          botmensaje.textContent = "❌ Error al conectar con el servidor.";
+          chatWindow.appendChild(botmensaje);
+          chatWindow.scrollTop = chatWindow.scrollHeight;
+        });
     }
+
+    document.getElementById('recordButton').addEventListener('click', toggleRecording);
+
+    // Modo oscuro
+    function toggleDarkMode() {
+      document.body.classList.toggle("modo-oscuro");
+    
+      // Función para que todas las imágenes reciban un filtro de inversión de color al activar el modo oscuro
+      const isDark = document.body.classList.contains("modo-oscuro");
+      document.querySelectorAll(".dark-toggle-icon").forEach(el => {
+        el.style.filter = isDark ? "invert(1)" : "none";
+      });
+    }
+
+    // Función para abrir el panel de ajustes
+    function toggleSettings() {
+      document.getElementById("panel-ajustes").classList.toggle("open");
+    }
+
+    // Función de inputs y textarea (textarea es mejor que el argumento input, ya que es más modificable y permite que el área crezca al escribir mucho texto)
+    const textarea = document.getElementById("input");
+
+      textarea.addEventListener("input", () => {
+      textarea.rows = 1; // Reset to 1 on every input
+      const lines = textarea.value.split("\n").length;
+      textarea.rows = Math.min(lines, 10); // Set max rows if needed
+    });
+
+
   </script>
 </body>
 </html>
