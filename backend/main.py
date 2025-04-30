@@ -4,11 +4,9 @@ from googletrans import Translator
 import requests
 from fastapi.middleware.cors import CORSMiddleware
 import os
-import whisper
 
 app = FastAPI()
 translator = Translator()
-model = whisper.load_model("small")
 
 # Middleware para permitir que el frontend acceda a este backend
 app.add_middleware(
