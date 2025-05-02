@@ -62,9 +62,22 @@
       <!-- Chat que contiene los mensajes -->
       <div class="ventana-chat" id="ventana-chat">
         <!-- Mensaje inicial estático del bot. Cada nuevo mensaje se añadirá debajo de este -->
-        <div class="mensaje bot">
-          Hi! I'm DEL.IA, your virtual assistant 😊
-        </div>
+        <div class="mensaje bot" id="mensaje-idioma">
+          Hi! I'm DEL.IA, your virtual assistant 😊<br><br>
+          Please select your language:<br><br>
+          <!-- Botón para seleccionar español -->
+          <button class="flag-button" onclick="setLanguageAndShowWelcome('es', this)">
+            <img src="src/spain.png" alt="Español" />
+          </button>
+          <!-- Botón para seleccionar francés -->
+          <button class="flag-button" onclick="setLanguageAndShowWelcome('fr', this)">
+            <img src="src/france.png" alt="Français" />
+          </button>
+          <!-- Botón para seleccionar inglés -->
+          <button class="flag-button" onclick="setLanguageAndShowWelcome('en', this)">
+            <img src="src/uk.png" alt="English" />
+          </button>
+        </div>  
       </div>
       <!-- Área de input del usuario -->
       <div class="contenedor-input">
@@ -81,147 +94,223 @@
     </div>
   </div>
 
-  <!-- Funciones JavaScript -->
-  <script>
-    const input = document.getElementById("input");
-    const chatWindow = document.getElementById("ventana-chat");
-    // Funcíón de conversación
-    input.addEventListener("keypress", function (e) {
-      if (e.key === "Enter" && input.value.trim() !== "") {
-        const usermensaje = document.createElement("div");
-        usermensaje.className = "mensaje user";
-        usermensaje.textContent = input.value.trim();
-        chatWindow.appendChild(usermensaje);
+ <!-- Funciones JavaScript -->
+ <script>
+  // Elementos del DOM necesarios
+  const input = document.getElementById("input");
+  const chatWindow = document.getElementById("ventana-chat");
 
-        const botmensaje = document.createElement("div");
-        botmensaje.className = "mensaje bot";
-        botmensaje.textContent = "( . . . )";
-        chatWindow.appendChild(botmensaje);
+  // Función para mostrar mensajes del bot + botones (si los hay)
+  function mostrarRespuestaDelBot(data) {
+    const botmensaje = document.createElement("div");
+    botmensaje.className = "mensaje bot";
+    // Muestra la respuesta de Rasa (original o traducida)
+    botmensaje.textContent = data.respuesta_traducida || data.respuesta_rasa || "Sin respuesta del bot.";
+    chatWindow.appendChild(botmensaje);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+    
+    // Si hay botones de respuesta rápida, los mostramos
+    if (data.botones && data.botones.length > 0) {
+      const botonesContainer = document.createElement("div");
+      botonesContainer.className = "botones-opciones";
 
-        const mensaje = input.value.trim();
-        input.value = "";
-        chatWindow.scrollTop = chatWindow.scrollHeight;
+      data.botones.forEach(boton => {
+        const btn = document.createElement("button");
+        btn.className = "boton-opcion";
+        btn.textContent = boton.title;
 
-        // El mensaje se envía al backend a la función de procesar-y-enviar
-        fetch("http://127.0.0.1:8000/procesar-y-enviar/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ mensaje: mensaje })
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            botmensaje.textContent = data.respuesta_traducida || data.respuesta_rasa || "Sin respuesta del bot.";
-            chatWindow.scrollTop = chatWindow.scrollHeight;
+        // Cuando se pulsa un botón de opción
+        btn.onclick = () => {
+          botonesContainer.remove(); // Quitamos los botones
+
+          // Mostramos el mensaje del usuario con el título del botón
+          const usermensaje = document.createElement("div");
+          usermensaje.className = "mensaje user";
+          usermensaje.textContent = boton.title;
+          chatWindow.appendChild(usermensaje);
+          chatWindow.scrollTop = chatWindow.scrollHeight;
+
+          // Enviamos el payload del botón al backend
+          fetch("http://127.0.0.1:8000/procesar-y-enviar/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mensaje: boton.payload })
           })
-          .catch((error) => {
-            console.error("Error al enviar mensaje:", error);
-            botmensaje.textContent = "❌ Error al conectar con el servidor.";
-          });
-      }
-    });
+            .then((response) => response.json())
+            .then((data) => mostrarRespuestaDelBot(data))
+            .catch((error) => {
+              console.error("Error al enviar opción seleccionada:", error);
+              const botError = document.createElement("div");
+              botError.className = "mensaje bot";
+              botError.textContent = "❌ Error al conectar con el servidor.";
+              chatWindow.appendChild(botError);
+              chatWindow.scrollTop = chatWindow.scrollHeight;
+            });
+        };
 
-    // SINGLE BUTTON AUDIO LOGIC
-    let isRecording = false;
-    let mediaRecorder;
-    let audioChunks = [];
+        botonesContainer.appendChild(btn);
+      });
 
-    async function toggleRecording() {
-      if (isRecording) {
-        mediaRecorder.stop();
-        document.getElementById('recordButton').innerHTML = '<img id="recordIcon" src="src/mic.svg" style="width: 30px; height: 30px" />';
-        isRecording = false;
-      } else {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          mediaRecorder = new MediaRecorder(stream);
-          audioChunks = [];
-
-          mediaRecorder.ondataavailable = (event) => {
-            audioChunks.push(event.data);
-          };
-
-          mediaRecorder.onstop = () => {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-            const audioUrl = URL.createObjectURL(audioBlob);
-
-            const audiomensaje = document.createElement('div');
-            audiomensaje.classList.add('mensaje', 'user');
-
-            const audioElement = document.createElement('audio');
-            audioElement.controls = true;
-            audioElement.src = audioUrl;
-
-            audiomensaje.appendChild(audioElement);
-            chatWindow.appendChild(audiomensaje);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-
-            sendAudioToServer(audioBlob);
-          };
-
-          mediaRecorder.start();
-          document.getElementById('recordButton').innerHTML = '<img id="recordIcon" src="src/arrow-right-short.svg" style="width: 30px; height: 30px" />';
-          isRecording = true;
-        } catch (err) {
-          console.error('Error accessing the microphone:', err);
-        }
-      }
+      chatWindow.appendChild(botonesContainer);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
     }
+  }
 
-    // El audio se envía a la función procesar-y-enviar, aunque habría que crear una nueva para ello
-    function sendAudioToServer(audioBlob) {
-      const formData = new FormData();
-      formData.append('audio', audioBlob, 'recorded_audio.wav');
+  // Envío del mensaje al presionar Enter
+  input.addEventListener("keypress", function (e) {
+    if (e.key === "Enter" && input.value.trim() !== "") {
+      // Añadimos el mensaje del usuario al chat
+      const usermensaje = document.createElement("div");
+      usermensaje.className = "mensaje user";
+      usermensaje.textContent = input.value.trim();
+      chatWindow.appendChild(usermensaje);
+      // Indicador de "escribiendo"
+      const botmensaje = document.createElement("div");
+      botmensaje.className = "mensaje bot";
+      botmensaje.textContent = "( . . . )";
+      chatWindow.appendChild(botmensaje);
 
-      fetch('http://127.0.0.1:8000/procesar-y-enviar/', {
-        method: 'POST',
-        body: formData
+      const mensaje = input.value.trim();
+      input.value = "";
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+
+      // Enviamos el mensaje al backend
+      fetch("http://127.0.0.1:8000/procesar-y-enviar/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mensaje })
       })
         .then((response) => response.json())
         .then((data) => {
-          const botmensaje = document.createElement("div");
-          botmensaje.className = "mensaje bot";
-          botmensaje.textContent = data.respuesta_traducida || data.respuesta_rasa || "Sin respuesta del bot.";
-          chatWindow.appendChild(botmensaje);
-          chatWindow.scrollTop = chatWindow.scrollHeight;
+          botmensaje.remove();  // quitamos el "escribiendo"
+          mostrarRespuestaDelBot(data); // Mostramos la respuesta real
         })
         .catch((error) => {
-          console.error("Error al enviar audio:", error);
-          const botmensaje = document.createElement("div");
-          botmensaje.className = "mensaje bot";
+          console.error("Error al enviar mensaje:", error);
           botmensaje.textContent = "❌ Error al conectar con el servidor.";
-          chatWindow.appendChild(botmensaje);
-          chatWindow.scrollTop = chatWindow.scrollHeight;
         });
     }
+  });
 
-    document.getElementById('recordButton').addEventListener('click', toggleRecording);
+  // GRABACIÓN DE AUDIO
+  let isRecording = false;
+  let mediaRecorder;
+  let audioChunks = [];
+  
+  // Función para iniciar/detener la grabación de audio
+  async function toggleRecording() {
+    if (isRecording) {
+      // Si ya estaba grabando, detenemos
+      mediaRecorder.stop();
+      document.getElementById('recordButton').innerHTML = '<img id="recordIcon" src="src/mic.svg" style="width: 30px; height: 30px" />';
+      isRecording = false;
+    } else {
+      try {
+        // Pedimos acceso al micrófono
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
 
-    // Modo oscuro
-    function toggleDarkMode() {
-      document.body.classList.toggle("modo-oscuro");
-    
-      // Función para que todas las imágenes reciban un filtro de inversión de color al activar el modo oscuro
-      const isDark = document.body.classList.contains("modo-oscuro");
-      document.querySelectorAll(".dark-toggle-icon").forEach(el => {
-        el.style.filter = isDark ? "invert(1)" : "none";
+        // Guardamos los fragmentos de audio grabados
+        mediaRecorder.ondataavailable = (event) => audioChunks.push(event.data);
+        
+        // Cuando se detiene la grabación
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+          const audioUrl = URL.createObjectURL(audioBlob);
+          // Mostramos el audio grabado en el chat
+          const audiomensaje = document.createElement('div');
+          audiomensaje.classList.add('mensaje', 'user');
+
+          const audioElement = document.createElement('audio');
+          audioElement.controls = true;
+          audioElement.src = audioUrl;
+
+          audiomensaje.appendChild(audioElement);
+          chatWindow.appendChild(audiomensaje);
+          chatWindow.scrollTop = chatWindow.scrollHeight;
+
+          sendAudioToServer(audioBlob); // Enviamos el audio al backend
+        };
+
+        mediaRecorder.start();
+        document.getElementById('recordButton').innerHTML = '<img id="recordIcon" src="src/arrow-right-short.svg" style="width: 30px; height: 30px" />';
+        isRecording = true;
+      } catch (err) {
+        console.error('Error accessing the microphone:', err);
+      }
+    }
+  }
+
+  // Envío del audio al backend
+  function sendAudioToServer(audioBlob) {
+    const formData = new FormData();
+    formData.append('audio', audioBlob, 'recorded_audio.wav');
+
+    fetch('http://127.0.0.1:8000/procesar-y-enviar/', {
+      method: 'POST',
+      body: formData
+    })
+      .then((response) => response.json())
+      .then((data) => mostrarRespuestaDelBot(data))
+      .catch((error) => {
+        console.error("Error al enviar audio:", error);
+        const botmensaje = document.createElement("div");
+        botmensaje.className = "mensaje bot";
+        botmensaje.textContent = "❌ Error al conectar con el servidor.";
+        chatWindow.appendChild(botmensaje);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
       });
-    }
+  }
 
-    // Función para abrir el panel de ajustes
-    function toggleSettings() {
-      document.getElementById("panel-ajustes").classList.toggle("open");
-    }
+  // Asociamos el botón de micrófono a la función de grabación
+  document.getElementById('recordButton').addEventListener('click', toggleRecording);
 
-    // Función de inputs y textarea (textarea es mejor que el argumento input, ya que es más modificable y permite que el área crezca al escribir mucho texto)
-    const textarea = document.getElementById("input");
-
-      textarea.addEventListener("input", () => {
-      textarea.rows = 1; // Reset to 1 on every input
-      const lines = textarea.value.split("\n").length;
-      textarea.rows = Math.min(lines, 10); // Set max rows if needed
+  // Activar o desactivar modo oscuro
+  function toggleDarkMode() {
+    document.body.classList.toggle("modo-oscuro");
+    const isDark = document.body.classList.contains("modo-oscuro");
+    document.querySelectorAll(".dark-toggle-icon").forEach(el => {
+      el.style.filter = isDark ? "invert(1)" : "none";
     });
+  }
 
+  // Mostrar u ocultar el panel de ajustes
+  function toggleSettings() {
+    document.getElementById("panel-ajustes").classList.toggle("open");
+  }
 
-  </script>
+  // Ajuste automático de tamaño del textarea
+  const textarea = document.getElementById("input");
+  textarea.addEventListener("input", () => {
+    textarea.rows = 1;
+    const lines = textarea.value.split("\n").length;
+    textarea.rows = Math.min(lines, 10); // Limita a 10 líneas
+  });
+
+  // Función para establecer idioma y mostrar mensaje de bienvenida
+  function setLanguageAndShowWelcome(lang, button) {
+    fetch("http://127.0.0.1:8000/establecer-idioma-y-welcome/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idioma: lang })
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        mostrarRespuestaDelBot(data); // Mostramos bienvenida original o traducida
+
+        // Desactivamos botones de idiomas y marcamos el elegido
+        const allButtons = document.querySelectorAll(".flag-button");
+        allButtons.forEach(btn => {
+          btn.classList.add("disabled");
+          btn.classList.remove("selected");
+        });
+        button.classList.add("selected");
+      })
+      .catch((error) => {
+        console.error("Error al establecer idioma:", error);
+      });
+  }
+</script>
 </body>
 </html>
