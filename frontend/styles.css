@@ -298,3 +298,97 @@ body.modo-oscuro .panel-ajustes {
   width: auto;
   object-fit: contain;
 }
+
+.flag-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin: 0 10px;
+  padding: 6px;
+}
+
+.flag-button img {
+  width: 64px;
+  height: 42px;
+  border-radius: 6px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.flag-button:hover img {
+  transform: scale(1.15);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+}
+
+.flag-button:active img {
+  transform: scale(1.05);
+  border: 2px solid #007bff;
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.6);
+}
+
+.flag-button.selected {
+  outline: 3px solid #007bff;
+  border-radius: 8px;
+  transform: scale(1.2);
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.6);
+}
+
+.flag-button.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.botones-opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.boton-opcion {
+  background-color: #e0e0e0;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-family: 'Montserrat', sans-serif;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.boton-opcion:hover {
+  background-color: #d0d0d0;
+}
+
+/* Botones de opciones con soporte para modo oscuro y estilo mejorado */
+.botones-opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 0.5rem;
+  margin-left: 1rem;
+  max-width: 70%;
+}
+
+.boton-opcion {
+  background-color: #e0e0e0;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 20px;
+  font-family: 'Montserrat', sans-serif;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  text-align: left;
+}
+
+.boton-opcion:hover {
+  background-color: #d0d0d0;
+  transform: scale(1.02);
+}
+
+body.modo-oscuro .boton-opcion {
+  background-color: #444;
+  color: #fff;
+}
+
+body.modo-oscuro .boton-opcion:hover {
+  background-color: #555;
+}
