@@ -9,7 +9,7 @@ Pese a que GitHub permite hostear aplicaciones front-end, no podemos conectarlas
 1.	Abre una terminal y colócate en la raíz del proyecto.
 2.	Crea un entorno virtual para el backend:
      python -m venv nombre_del_entorno
-3.	Activa el entorno: nombre_del_entorno\Scripts\activate (para Windows) o source nombre_del_entorno/bin/actívate (para macOS/Linux)
+3.	Activa el entorno: nombre_del_entorno\Scripts\activate (para Windows) o source nombre_del_entorno/bin/activate (para macOS/Linux)
   	
 5.	Instala las dependencias: pip install -r backend/requirements.txt
 
