@@ -16,7 +16,7 @@ Pese a que GitHub permite hostear aplicaciones front-end, no podemos conectarlas
 🚀 Paso 2: Ejecutar el backend con FastAPI
 
 1.	En la misma terminal (con el entorno virtual activado), entra en la carpeta del backend: cd backend
-3.	Lanza el servidor FastAPI: uvicorn main:app –-reload
+3.	Lanza el servidor FastAPI: uvicorn main:app --reload
 4.	Si todo va bien, verás este mensaje: INFO:     Application startup complete.
 📍 FastAPI estará disponible en: http://127.0.0.1:8000
 ➡️ Deja esta terminal abierta y funcionando.
