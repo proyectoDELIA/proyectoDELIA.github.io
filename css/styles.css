@@ -96,7 +96,7 @@ body.modo-oscuro .barra-lateral {
   overflow: hidden;
   outline: 2px solid #3E1929;
   position: relative;
-  background-image: url("../images/delia-bg-transparent.png"); /* Add your background image here */
+  background-image: url("../images/sf_manogris_transparent.PNG"); /* Add your background image here */
   background-size: contain; /* Adjust the size of the image */
   background-repeat: no-repeat; /* Prevent repeating of the image */
   background-position: center;
