@@ -5,9 +5,9 @@
   <!-- Título de la web -->
   <title>DEL.IA Virtual Assistant</title>
   <!-- Icono de la web -->
-  <link rel="icon" type="image/x-icon" href="src/delia.jpeg" />
+  <link rel="icon" type="image/x-icon" href="images/delia.jpeg" />
   <!-- CSS -->
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="css/styles.css" />
   <!-- Fuentes de Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,7 +24,7 @@
     <div class="barra-lateral">
       <!-- Foto de perfil -->
       <div class="foto-perfil">
-        <img src="src/base-removebg-preview.png" />
+        <img src="images/base-removebg-preview.png" />
       </div>
       <!-- Título -->
       <div class="titulo">DEL.IA</div>
@@ -37,13 +37,13 @@
         Target="_blank" hace que clicar abra una nueva página, en vez de reemplazar en la que estás -->
       <div class="redes-sociales">
         <a href="https://github.com/proyectoDELIA/DEL.IA-chatbot/" target="_blank">
-          <img class="dark-toggle-icon" src="src/github.svg" style="width: 50px; height: 50px" />
+          <img class="dark-toggle-icon" src="images/github.svg" style="width: 50px; height: 50px" />
         </a>
         <a href="https://www.linkedin.com/in/proyecto-delia-125b09359/" target="_blank">
-          <img class="dark-toggle-icon" src="src/linkedin.svg" style="width: 50px; height: 50px" />
+          <img class="dark-toggle-icon" src="images/linkedin.svg" style="width: 50px; height: 50px" />
         </a>
         <a href="https://www.instagram.com/proyectodel.ia/" target="_blank">
-          <img class="dark-toggle-icon" src="src/instagram.svg" style="width: 50px; height: 50px" />
+          <img class="dark-toggle-icon" src="images/instagram.svg" style="width: 50px; height: 50px" />
         </a>
       </div>
     </div>
@@ -51,12 +51,12 @@
     <div class="contenedor-general-chat">
       <!-- Botón que abre el panel de ajustes -->
       <div class="boton-ajustes" onclick="toggleSettings()">
-        <img src="src/gear.svg" alt="Settings" />
+        <img src="images/gear.svg" alt="Settings" />
       </div>
       <!-- Panel de ajustes -->
       <div class="panel-ajustes" id="panel-ajustes">
         <button class="toggle-btn" onclick="toggleDarkMode()">
-          <img class="dark-toggle-icon" src="src/circle-half.svg" style="width: 30px; height: 30px" />
+          <img class="dark-toggle-icon" src="images/circle-half.svg" style="width: 30px; height: 30px" />
         </button>
       </div>
       <!-- Chat que contiene los mensajes -->
@@ -64,253 +64,34 @@
         <!-- Mensaje inicial estático del bot. Cada nuevo mensaje se añadirá debajo de este -->
         <div class="mensaje bot" id="mensaje-idioma">
           Hi! I'm DEL.IA, your virtual assistant 😊<br><br>
-          Please select your language:<br><br>
+          Please select your language:<br>
           <!-- Botón para seleccionar español -->
           <button class="flag-button" onclick="setLanguageAndShowWelcome('es', this)">
-            <img src="src/spain.png" alt="Español" />
+            <img src="images/spain.png" alt="Español" />
           </button>
           <!-- Botón para seleccionar francés -->
           <button class="flag-button" onclick="setLanguageAndShowWelcome('fr', this)">
-            <img src="src/france.png" alt="Français" />
+            <img src="images/france.png" alt="Français" />
           </button>
           <!-- Botón para seleccionar inglés -->
           <button class="flag-button" onclick="setLanguageAndShowWelcome('en', this)">
-            <img src="src/uk.png" alt="English" />
+            <img src="images/uk.png" alt="English" />
           </button>
         </div>  
       </div>
       <!-- Área de input del usuario -->
       <div class="contenedor-input">
-        <!-- Elemento para crear un área de división entre input de texto e input de audio -->
-        <div class="input-wrapper">
-          <!-- Input de audio, la imagen del botón cambia al iniciar la captura de audio -->
-          <button id="recordButton" class="input-button">
-            <img id="recordIcon" src="src/mic.svg" style="width: 25px; height: 25px" />
-          </button>
-          <!-- Placeholder de mensaje, desaparece al empezar a escribir -->
-          <textarea id="input" placeholder="Type a message..." rows="1"></textarea>
-        </div>
+        <!-- Input de audio, la imagen del botón cambia al iniciar la captura de audio -->
+        <button id="recordButton" class="input-button">
+          <img id="recordIcon" class="dark-toggle-icon" src="images/mic.svg" style="width: 25px; height: 25px" />
+        </button>
+        <!-- Placeholder de mensaje, desaparece al empezar a escribir -->
+        <textarea id="input" placeholder="Type a message..." rows="1"></textarea>
       </div>
     </div>
   </div>
 
- <!-- Funciones JavaScript -->
- <script>
-  // Elementos del DOM necesarios
-  const input = document.getElementById("input");
-  const chatWindow = document.getElementById("ventana-chat");
-
-  // Función para mostrar mensajes del bot + botones (si los hay)
-  function mostrarRespuestaDelBot(data) {
-    const botmensaje = document.createElement("div");
-    botmensaje.className = "mensaje bot";
-    // Muestra la respuesta de Rasa (original o traducida)
-    botmensaje.textContent = data.respuesta_traducida || data.respuesta_rasa || "Sin respuesta del bot.";
-    chatWindow.appendChild(botmensaje);
-    chatWindow.scrollTop = chatWindow.scrollHeight;
-    
-    // Si hay botones de respuesta rápida, los mostramos
-    if (data.botones && data.botones.length > 0) {
-      const botonesContainer = document.createElement("div");
-      botonesContainer.className = "botones-opciones";
-
-      data.botones.forEach(boton => {
-        const btn = document.createElement("button");
-        btn.className = "boton-opcion";
-        btn.textContent = boton.title;
-
-        // Cuando se pulsa un botón de opción
-        btn.onclick = () => {
-          botonesContainer.remove(); // Quitamos los botones
-
-          // Mostramos el mensaje del usuario con el título del botón
-          const usermensaje = document.createElement("div");
-          usermensaje.className = "mensaje user";
-          usermensaje.textContent = boton.title;
-          chatWindow.appendChild(usermensaje);
-          chatWindow.scrollTop = chatWindow.scrollHeight;
-
-          // Enviamos el payload del botón al backend
-          fetch("http://127.0.0.1:8000/procesar-y-enviar/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ mensaje: boton.payload })
-          })
-            .then((response) => response.json())
-            .then((data) => mostrarRespuestaDelBot(data))
-            .catch((error) => {
-              console.error("Error al enviar opción seleccionada:", error);
-              const botError = document.createElement("div");
-              botError.className = "mensaje bot";
-              botError.textContent = "❌ Error al conectar con el servidor.";
-              chatWindow.appendChild(botError);
-              chatWindow.scrollTop = chatWindow.scrollHeight;
-            });
-        };
-
-        botonesContainer.appendChild(btn);
-      });
-
-      chatWindow.appendChild(botonesContainer);
-      chatWindow.scrollTop = chatWindow.scrollHeight;
-    }
-  }
-
-  // Envío del mensaje al presionar Enter
-  input.addEventListener("keypress", function (e) {
-    if (e.key === "Enter" && input.value.trim() !== "") {
-      // Añadimos el mensaje del usuario al chat
-      const usermensaje = document.createElement("div");
-      usermensaje.className = "mensaje user";
-      usermensaje.textContent = input.value.trim();
-      chatWindow.appendChild(usermensaje);
-      // Indicador de "escribiendo"
-      const botmensaje = document.createElement("div");
-      botmensaje.className = "mensaje bot";
-      botmensaje.textContent = "( . . . )";
-      chatWindow.appendChild(botmensaje);
-
-      const mensaje = input.value.trim();
-      input.value = "";
-      chatWindow.scrollTop = chatWindow.scrollHeight;
-
-      // Enviamos el mensaje al backend
-      fetch("http://127.0.0.1:8000/procesar-y-enviar/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mensaje })
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          botmensaje.remove();  // quitamos el "escribiendo"
-          mostrarRespuestaDelBot(data); // Mostramos la respuesta real
-        })
-        .catch((error) => {
-          console.error("Error al enviar mensaje:", error);
-          botmensaje.textContent = "❌ Error al conectar con el servidor.";
-        });
-    }
-  });
-
-  // GRABACIÓN DE AUDIO
-  let isRecording = false;
-  let mediaRecorder;
-  let audioChunks = [];
-  
-  // Función para iniciar/detener la grabación de audio
-  async function toggleRecording() {
-    if (isRecording) {
-      // Si ya estaba grabando, detenemos
-      mediaRecorder.stop();
-      document.getElementById('recordButton').innerHTML = '<img id="recordIcon" src="src/mic.svg" style="width: 30px; height: 30px" />';
-      isRecording = false;
-    } else {
-      try {
-        // Pedimos acceso al micrófono
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        audioChunks = [];
-
-        // Guardamos los fragmentos de audio grabados
-        mediaRecorder.ondataavailable = (event) => audioChunks.push(event.data);
-        
-        // Cuando se detiene la grabación
-        mediaRecorder.onstop = () => {
-          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-          const audioUrl = URL.createObjectURL(audioBlob);
-          // Mostramos el audio grabado en el chat
-          const audiomensaje = document.createElement('div');
-          audiomensaje.classList.add('mensaje', 'user');
-
-          const audioElement = document.createElement('audio');
-          audioElement.controls = true;
-          audioElement.src = audioUrl;
-
-          audiomensaje.appendChild(audioElement);
-          chatWindow.appendChild(audiomensaje);
-          chatWindow.scrollTop = chatWindow.scrollHeight;
-
-          sendAudioToServer(audioBlob); // Enviamos el audio al backend
-        };
-
-        mediaRecorder.start();
-        document.getElementById('recordButton').innerHTML = '<img id="recordIcon" src="src/arrow-right-short.svg" style="width: 30px; height: 30px" />';
-        isRecording = true;
-      } catch (err) {
-        console.error('Error accessing the microphone:', err);
-      }
-    }
-  }
-
-  // Envío del audio al backend
-  function sendAudioToServer(audioBlob) {
-    const formData = new FormData();
-    formData.append('audio', audioBlob, 'recorded_audio.wav');
-
-    fetch('http://127.0.0.1:8000/procesar-y-enviar/', {
-      method: 'POST',
-      body: formData
-    })
-      .then((response) => response.json())
-      .then((data) => mostrarRespuestaDelBot(data))
-      .catch((error) => {
-        console.error("Error al enviar audio:", error);
-        const botmensaje = document.createElement("div");
-        botmensaje.className = "mensaje bot";
-        botmensaje.textContent = "❌ Error al conectar con el servidor.";
-        chatWindow.appendChild(botmensaje);
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-      });
-  }
-
-  // Asociamos el botón de micrófono a la función de grabación
-  document.getElementById('recordButton').addEventListener('click', toggleRecording);
-
-  // Activar o desactivar modo oscuro
-  function toggleDarkMode() {
-    document.body.classList.toggle("modo-oscuro");
-    const isDark = document.body.classList.contains("modo-oscuro");
-    document.querySelectorAll(".dark-toggle-icon").forEach(el => {
-      el.style.filter = isDark ? "invert(1)" : "none";
-    });
-  }
-
-  // Mostrar u ocultar el panel de ajustes
-  function toggleSettings() {
-    document.getElementById("panel-ajustes").classList.toggle("open");
-  }
-
-  // Ajuste automático de tamaño del textarea
-  const textarea = document.getElementById("input");
-  textarea.addEventListener("input", () => {
-    textarea.rows = 1;
-    const lines = textarea.value.split("\n").length;
-    textarea.rows = Math.min(lines, 10); // Limita a 10 líneas
-  });
-
-  // Función para establecer idioma y mostrar mensaje de bienvenida
-  function setLanguageAndShowWelcome(lang, button) {
-    fetch("http://127.0.0.1:8000/establecer-idioma-y-welcome/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idioma: lang })
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        mostrarRespuestaDelBot(data); // Mostramos bienvenida original o traducida
-
-        // Desactivamos botones de idiomas y marcamos el elegido
-        const allButtons = document.querySelectorAll(".flag-button");
-        allButtons.forEach(btn => {
-          btn.classList.add("disabled");
-          btn.classList.remove("selected");
-        });
-        button.classList.add("selected");
-      })
-      .catch((error) => {
-        console.error("Error al establecer idioma:", error);
-      });
-  }
-</script>
+  <!-- Funciones JavaScript -->
+  <script src="js/script.js"></script>
 </body>
 </html>
