@@ -5,6 +5,7 @@ Pese a que GitHub permite hostear aplicaciones front-end, no podemos conectarlas
 
 ------------------------
 🤔 Paso ?: Instalar FFMPEG para el reconocimiento de voz
+
 Nuestro Chatbot tiene implementado un reconocedor de voz, pero para utilizarlo, debes instalar FFMPEG, un software de código abierto para el tratamiento de archivos de audio. Para instalarlo, debes:
 1.   Ir a https://www.ffmpeg.org/download.html y descargar la versión que más se adecúe a tu sistema operativo.
 2.   Extrae el archivo descargado.
