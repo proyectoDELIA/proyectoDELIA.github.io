@@ -4,14 +4,22 @@ Front-end de juguete para proyecto DELIA
 Pese a que GitHub permite hostear aplicaciones front-end, no podemos conectarlas directamente a un back-end en GitHub. Sin embargo, podemos conectarlo a un back-end hosteado en otra parte a través de APIs (FastAPI) y viceversa.
 
 ------------------------
+🤔 Paso ?: Instalar FFMPEG para el reconocimiento de voz
+Nuestro Chatbot tiene implementado un reconocedor de voz, pero para utilizarlo, debes instalar FFMPEG, un software de código abierto para el tratamiento de archivos de audio. Para instalarlo, debes:
+1.   Ir a https://www.ffmpeg.org/download.html y descargar la versión que más se adecúe a tu sistema operativo.
+2.   Extrae el archivo descargado.
+3.   Coloca la carpeta extraída, junto a todos sus contenidos, en una ruta no muy profunda.
+4.   Añade la ruta de la carpeta ffmpeg/bin a tu PATH.
+5.   Asegúrate de que FFMPEG está instalando escribiendo en tu terminal de tu comandos la siguiente línea: ffmpeg -version (en Windows, en Mac será otro el comando)
+   
 🧪 Paso 1: Crear y activar entorno virtual del backend
 
 1.	Abre una terminal y colócate en la raíz del proyecto.
 2.	Crea un entorno virtual para el backend:
      python -m venv nombre_del_entorno
 3.	Activa el entorno: nombre_del_entorno\Scripts\activate (para Windows) o source nombre_del_entorno/bin/activate (para macOS/Linux)
-  	
-5.	Instala las dependencias: pip install -r backend/requirements.txt
+4.	Instala las dependencias: pip install -r backend/requirements.txt
+5.	Paso extra: comprueba que el entorno virtual también tiene acceso a la ruta de FFMPEG. Si el backend no encuentra la ruta, no funcionará el reconocedor de voz.
 
 🚀 Paso 2: Ejecutar el backend con FastAPI
 
